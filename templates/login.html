@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Products</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-image: url(\'/static/images/veges.jpg\');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #152911;
+        }
+
+        header {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo img {
+            display: block;
+            max-width: 100%;
+            height: 50px;
+        }
+       
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .header-actions button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-button, .add-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-button:hover, .add-button:hover, #save-button:hover {
+            background-color: #388E3C;
+        }
+
+        .search-bar {
+            flex: 1;
+            margin-left: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            background-color: rgba(244, 244, 244, 0.8);
+            margin: 2rem;
+            border-radius: 10px;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        section {
+            padding: 2rem;
+        }
+
+        .category-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .service-container, .product-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .category-item, .service-item, .product-item {
+            background-color: rgba(232, 232, 232, 0.8);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+
+        .category-item:hover, .service-item:hover, .product-item:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            background-color: rgba(51, 51, 51, 0.9);
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .footer-actions {
+            display: none;
+        }
+    </style>
+
+    <!-- shared chat/save controls -->
+    <style>
+        .fixed-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+
+        .fixed-actions button {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            font-size: 1.25rem;
+        }
+
+        .fixed-actions button:hover {
+            background-color: #388E3C;
+        }
+
+        .message-panel,
+        .save-panel {
+            position: fixed;
+            right: 20px;
+            width: 320px;
+            max-width: calc(100% - 40px);
+            background-color: rgba(255, 255, 255, 0.98);
+            color: #152911;
+            border-radius: 14px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+            padding: 1rem;
+            display: none;
+            z-index: 1000;
+        }
+
+        .message-panel {
+            bottom: 90px;
+        }
+
+        .save-panel {
+            bottom: 90px;
+            right: 20px;
+        }
+
+        .message-panel h3,
+        .save-panel h3 {
+            margin: 0 0 0.75rem 0;
+            font-size: 1.05rem;
+        }
+
+        .message-panel textarea,
+        .save-panel input,
+        .save-panel textarea {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 0.8rem;
+            margin-bottom: 0.75rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .panel-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .panel-actions button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.55rem 0.9rem;
+            cursor: pointer;
+        }
+    </style>
+    <!-- end shared chat/save controls -->
+
+</head>
+
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="/static/images/logo.png" alt="FarmFresh Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/register">Register</a></li>
+            </ul>
+        </nav>
+    </header>
+   
+    <div class="modal-content" id="login-modal" style="margin: 5rem auto; width: 400px;">
+        <form id="login-form" method="POST">
+            <h2>Login to FarmFresh</h2>
+            {% if error %}<p style="color: red;">{{ error }}</p>{% endif %}
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+            <p>Don't have an account? <a href="/register">Register here</a></p>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 FarmFresh. All rights reserved.</p>
+    </footer>
+   
+
+    <!-- shared chat/save controls -->
+    <div class="fixed-actions">
+        <button id="save-button" type="button" title="Save product" onclick="toggleSavePanel()">💾</button>
+        <button id="chat-button" type="button" title="Chat" onclick="toggleMessagePanel()">💬</button>
+    </div>
+
+    <div class="message-panel" id="message-panel">
+        <h3>Chat with FarmFresh</h3>
+        <textarea id="chat-text" placeholder="Type your message..."></textarea>
+        <div class="panel-actions">
+            <button type="button" onclick="sendChat()">Send</button>
+            <button type="button" onclick="toggleMessagePanel()">Close</button>
+        </div>
+    </div>
+
+    <div class="save-panel" id="save-panel">
+        <h3>Save a product</h3>
+        <input type="text" id="save-product-name" placeholder="Product name">
+        <textarea id="save-note" placeholder="Add a note (optional)"></textarea>
+        <div class="panel-actions">
+            <button type="button" onclick="saveProduct()">Save</button>
+            <button type="button" onclick="toggleSavePanel()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMessagePanel() {
+            const panel = document.getElementById('message-panel');
+            const savePanel = document.getElementById('save-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') savePanel.style.display = 'none';
+        }
+
+        function toggleSavePanel() {
+            const panel = document.getElementById('save-panel');
+            const messagePanel = document.getElementById('message-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') messagePanel.style.display = 'none';
+        }
+
+        function sendChat() {
+            const input = document.getElementById('chat-text');
+            if (!input.value.trim()) {
+                alert('Please type a message first.');
+                return;
+            }
+            alert('Message sent: ' + input.value.trim());
+            input.value = '';
+            toggleMessagePanel();
+        }
+
+        function saveProduct() {
+            const nameEl = document.getElementById('save-product-name');
+            const noteEl = document.getElementById('save-note');
+            const productName = nameEl.value.trim();
+            if (!productName) {
+                alert('Please enter a product name to save.');
+                return;
+            }
+            const saved = JSON.parse(localStorage.getItem('farmfresh_saved_products') || '[]');
+            saved.push({
+                name: productName,
+                note: noteEl.value.trim(),
+                page: location.pathname,
+                savedAt: new Date().toISOString()
+            });
+            localStorage.setItem('farmfresh_saved_products', JSON.stringify(saved));
+            alert('Saved "' + productName + '" successfully.');
+            nameEl.value = '';
+            noteEl.value = '';
+            toggleSavePanel();
+        }
+    </script>
+    <!-- end shared chat/save controls -->
+
+</body>
+
+
+
+
+<script>
+    document.getElementById("upload-button").addEventListener("click", function () {
+    document.getElementById("upload-container").style.display = "block";
+});
+
+</script>
+
+
+</html>

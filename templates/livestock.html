@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livestock - FarmFresh</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-image: url(\'/static/images/c2.jpg\');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #333;
+        }
+
+        header {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo img {
+            display: block;
+            max-width: 100%;
+            height: 50px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .header-actions button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-button, .add-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .save-panel {
+            position: absolute;
+            top: 90px;
+            right: 20px;
+            width: 320px;
+            max-width: calc(100% - 40px);
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #152911;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            display: none;
+            z-index: 20;
+        }
+
+        .message-panel {
+            position: absolute;
+            top: 90px;
+            right: 20px;
+            width: 320px;
+            max-width: calc(100% - 40px);
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #152911;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            display: none;
+            z-index: 20;
+        }
+
+        .save-panel input,
+        .save-panel textarea,
+        .message-panel textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .panel-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .panel-actions button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .panel-actions button:hover {
+            background-color: #388E3C;
+        }
+
+        .search-bar {
+            flex: 1;
+            margin-left: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            background-color: rgba(244, 244, 244, 0.8);
+            margin: 2rem;
+            border-radius: 10px;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        section {
+            padding: 2rem;
+        }
+
+        .category-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .service-container, .product-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .category-item, .service-item, .product-item {
+            background-color: rgba(232, 232, 232, 0.8);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+
+        .category-item:hover, .service-item:hover, .product-item:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            background-color: rgba(51, 51, 51, 0.9);
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .footer-actions {
+            display: none;
+        }
+
+        .filter-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .filter-container select {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Livestock - FarmFresh</h1>
+        
+            <nav>
+                <div class="logo">
+                    <img src="/static/images/logo.png" alt="FarmFresh Logo">
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    
+                    
+                    <li><a href="#product">Product</a></li>
+                    
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search...">
+                </div>
+                <button id="save-button" type="button" onclick="toggleSavePanel()">Save</button>
+                <button id="chat-button" class="chat-button" type="button" onclick="toggleMessagePanel()">💬</button>
+                <button class="add-button">+</button>
+            </div>
+        
+    </header>
+    <main class="container">
+        <h2>Explore Our Livestock</h2>
+        <p>Select from a variety of livestock categories below:</p>
+        <div class="subcategories">
+            <div class="subcategory">
+                <a href="cows.html">
+                    <img src="/static/images/c3.jpg" alt="Cows" height="250" width="300">
+                    <p>Cows</p>
+                </a>
+            </div>
+            <div class="subcategory">
+                <a href="goats.html">
+                    <img src="/static/images/goats.jpg" alt="Goats">
+                    <p>Goats</p>
+                </a>
+            </div>
+            <div class="subcategory">
+                <a href="sheep.html">
+                    <img src="/static/images/sh2.jpg" alt="Sheep">
+                    <p>Sheep</p>
+                </a>
+            </div>
+            <div class="subcategory">
+                <a href="fowls.html">
+                    <img src="/static/images/fowl1.jpg" alt="Fowls">
+                    <p>Fowls</p>
+                </a>
+            </div>
+            <div class="subcategory">
+                <a href="guinea_fowls.html">
+                    <img src="/static/images/guinea_fowls.jpg" alt="Guinea Fowls">
+                    <p>Guinea Fowls</p>
+                </a>
+            </div>
+            <div class="subcategory">
+                <a href="camel.html">
+                    <img src="/static/images/cam2.jpg" alt="Camel" height="203" width="300">
+
+                    <p>Camels</p>
+                </a>
+            </div>
+            <div class="subcategory">
+                <a href="rabbits.html">
+                    <img src="/static/images/rabits.jpg" alt="Rabbits">
+                    <p>Rabbits</p>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    
+        
+        <div class="product-container" id="product-list">
+            <div class="product-item" data-category="cows">Cow 1</div>
+            <div class="product-item" data-category="goats">Goat 1</div>
+            <div class="product-item" data-category="sheep">Sheep 1</div>
+            <div class="product-item" data-category="fowls">Fowl 1</div>
+        </div>
+    </section>
+
+   
+    </main>
+   
+    <footer>
+        <p>&copy; 2025 FarmFresh. All rights reserved.</p>
+    </footer>
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const productList = document.getElementById('product-list');
+        const filterLivestock = document.getElementById('filter-livestock');
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            const searchValue = e.target.value.toLowerCase();
+            const items = productList.querySelectorAll('.product-item');
+
+            items.forEach(item => {
+                if (item.textContent.toLowerCase().includes(searchValue)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter functionality
+        filterLivestock.addEventListener('change', (e) => {
+            const filterValue = e.target.value;
+            const items = productList.querySelectorAll('.product-item');
+
+            items.forEach(item => {
+                if (filterValue === 'all' || item.dataset.category === filterValue) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <div class="message-panel" id="message-panel">
+        <h3>Chat with FarmFresh</h3>
+        <textarea id="chat-text" placeholder="Type your message..."></textarea>
+        <div class="panel-actions">
+            <button type="button" onclick="sendChat()">Send</button>
+            <button type="button" onclick="toggleMessagePanel()">Close</button>
+        </div>
+    </div>
+
+    <div class="save-panel" id="save-panel">
+        <h3>Save a product</h3>
+        <input type="text" id="save-product-name" placeholder="Product name">
+        <textarea id="save-note" placeholder="Add a note (optional)"></textarea>
+        <div class="panel-actions">
+            <button type="button" onclick="saveProduct()">Save</button>
+            <button type="button" onclick="toggleSavePanel()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMessagePanel() {
+            const panel = document.getElementById('message-panel');
+            const savePanel = document.getElementById('save-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') savePanel.style.display = 'none';
+        }
+
+        function toggleSavePanel() {
+            const panel = document.getElementById('save-panel');
+            const messagePanel = document.getElementById('message-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') messagePanel.style.display = 'none';
+        }
+
+        function sendChat() {
+            const input = document.getElementById('chat-text');
+            if (!input.value.trim()) {
+                alert('Please type a message first.');
+                return;
+            }
+            alert('Message sent: ' + input.value.trim());
+            input.value = '';
+            toggleMessagePanel();
+        }
+
+        function saveProduct() {
+            const nameEl = document.getElementById('save-product-name');
+            const noteEl = document.getElementById('save-note');
+            const productName = nameEl.value.trim();
+            if (!productName) {
+                alert('Please enter a product name to save.');
+                return;
+            }
+            const saved = JSON.parse(localStorage.getItem('farmfresh_saved_products') || '[]');
+            saved.push({name: productName, note: noteEl.value.trim(), page: location.pathname, savedAt: new Date().toISOString()});
+            localStorage.setItem('farmfresh_saved_products', JSON.stringify(saved));
+            alert('Saved '"' + productName + '" successfully.');
+            nameEl.value = '';
+            noteEl.value = '';
+            toggleSavePanel();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livestock Products - FarmFresh</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; color: #152911; }
+        header { background-color: #4CAF50; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        nav ul { list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0; }
+        nav a { color: white; text-decoration: none; }
+        .header-actions { display: flex; gap: 0.75rem; align-items: center; position: relative; }
+        .header-actions button { background: #4CAF50; color: white; border: none; padding: 0.75rem; border-radius: 50%; cursor: pointer; width: 50px; height: 50px; display: inline-flex; justify-content: center; align-items: center; }
+        .message-panel, .save-panel { position: fixed; right: 20px; width: 320px; max-width: calc(100% - 40px); background: rgba(255,255,255,0.96); color: #152911; border-radius: 12px; box-shadow: 0 12px 28px rgba(0,0,0,0.18); padding: 1rem; display: none; z-index: 1000; }
+        .message-panel { bottom: 100px; }
+        .save-panel { bottom: 100px; }
+        .message-panel textarea, .save-panel input, .save-panel textarea { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 0.75rem; }
+        .panel-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+        .panel-actions button { border: none; border-radius: 8px; padding: 0.6rem 1rem; background: #4CAF50; color: white; cursor: pointer; }
+        .panel-actions button:hover { background: #388E3C; }
+        main { padding: 2rem; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+        .product-card { background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Livestock Products</h1>
+            <p>Browse our selection and save items you like.</p>
+        </div>
+        <div class="header-actions">
+            <button id="save-button" type="button" onclick="toggleSavePanel()" title="Save">💾</button>
+            <button id="chat-button" type="button" onclick="toggleMessagePanel()" title="Chat">💬</button>
+            <a href="/" style="background:#fff;color:#4CAF50;border-radius:8px;padding:0.75rem 1rem;text-decoration:none;font-weight:600;">Home</a>
+        </div>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="/fruits">Fruits</a></li>
+            <li><a href="/vegetables">Vegetables</a></li>
+            <li><a href="/livestock">Livestock</a></li>
+            <li><a href="/dairy">Dairy</a></li>
+            <li><a href="/seeds_tools">Seeds & Tools</a></li>
+            <li><a href="/meats">Meats</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section class="product-grid">
+            <article class="product-card">
+                <h2>Local Beef</h2>
+                <p>Grass-fed beef from trusted livestock farmers.</p>
+            </article>
+            <article class="product-card">
+                <h2>Fresh Milk</h2>
+                <p>Delivering dairy straight from the farm.</p>
+            </article>
+            <article class="product-card">
+                <h2>Egg Baskets</h2>
+                <p>Free-range eggs ready for your kitchen.</p>
+            </article>
+        </section>
+    </main>
+
+    <div class="message-panel" id="message-panel">
+        <h3>Chat with FarmFresh</h3>
+        <textarea id="chat-text" placeholder="Type your message..."></textarea>
+        <div class="panel-actions">
+            <button type="button" onclick="sendChat()">Send</button>
+            <button type="button" onclick="toggleMessagePanel()">Close</button>
+        </div>
+    </div>
+
+    <div class="save-panel" id="save-panel">
+        <h3>Save a product</h3>
+        <input type="text" id="save-product-name" placeholder="Product name">
+        <textarea id="save-note" placeholder="Add a note (optional)"></textarea>
+        <div class="panel-actions">
+            <button type="button" onclick="saveProduct()">Save</button>
+            <button type="button" onclick="toggleSavePanel()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMessagePanel() {
+            const panel = document.getElementById('message-panel');
+            const savePanel = document.getElementById('save-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') savePanel.style.display = 'none';
+        }
+
+        function toggleSavePanel() {
+            const panel = document.getElementById('save-panel');
+            const messagePanel = document.getElementById('message-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') messagePanel.style.display = 'none';
+        }
+
+        function sendChat() {
+            const input = document.getElementById('chat-text');
+            if (!input.value.trim()) {
+                alert('Please type a message first.');
+                return;
+            }
+            alert('Message sent: ' + input.value.trim());
+            input.value = '';
+            toggleMessagePanel();
+        }
+
+        function saveProduct() {
+            const nameEl = document.getElementById('save-product-name');
+            const noteEl = document.getElementById('save-note');
+            const productName = nameEl.value.trim();
+            if (!productName) {
+                alert('Please enter a product name to save.');
+                return;
+            }
+            const saved = JSON.parse(localStorage.getItem('farmfresh_saved_products') || '[]');
+            saved.push({ name: productName, note: noteEl.value.trim(), page: location.pathname, savedAt: new Date().toISOString() });
+            localStorage.setItem('farmfresh_saved_products', JSON.stringify(saved));
+            alert('Saved "' + productName + '" successfully.');
+            nameEl.value = '';
+            noteEl.value = '';
+            toggleSavePanel();
+        }
+    </script>
+</body>
+</html>

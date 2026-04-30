@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Meats - FarmFresh</title>
+    <link rel=\"stylesheet\" href=\"styles.css\">
+
+    <!-- shared chat/save controls -->
+    <style>
+        .fixed-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+
+        .fixed-actions button {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            font-size: 1.25rem;
+        }
+
+        .fixed-actions button:hover {
+            background-color: #388E3C;
+        }
+
+        .message-panel,
+        .save-panel {
+            position: fixed;
+            right: 20px;
+            width: 320px;
+            max-width: calc(100% - 40px);
+            background-color: rgba(255, 255, 255, 0.98);
+            color: #152911;
+            border-radius: 14px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+            padding: 1rem;
+            display: none;
+            z-index: 1000;
+        }
+
+        .message-panel {
+            bottom: 90px;
+        }
+
+        .save-panel {
+            bottom: 90px;
+            right: 20px;
+        }
+
+        .message-panel h3,
+        .save-panel h3 {
+            margin: 0 0 0.75rem 0;
+            font-size: 1.05rem;
+        }
+
+        .message-panel textarea,
+        .save-panel input,
+        .save-panel textarea {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 0.8rem;
+            margin-bottom: 0.75rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .panel-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .panel-actions button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.55rem 0.9rem;
+            cursor: pointer;
+        }
+    </style>
+    <!-- end shared chat/save controls -->
+
+</head>
+<body>
+    <header>
+        <h1>Meats</h1>
+    </header>
+    <main>
+        <section>
+            <h2>High-Quality Meats</h2>
+            <p>We provide fresh and high-quality meats sourced from our farm-raised animals.</p>
+            <ul>
+                <li>Beef</li>
+                <li>Pork</li>
+                <li>Chicken</li>
+                <li>Lamb</li>
+                <li>Turkey</li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 FarmFresh. All rights reserved.</p>
+    </footer>
+
+    <!-- shared chat/save controls -->
+    <div class="fixed-actions">
+        <button id="save-button" type="button" title="Save product" onclick="toggleSavePanel()">💾</button>
+        <button id="chat-button" type="button" title="Chat" onclick="toggleMessagePanel()">💬</button>
+    </div>
+
+    <div class="message-panel" id="message-panel">
+        <h3>Chat with FarmFresh</h3>
+        <textarea id="chat-text" placeholder="Type your message..."></textarea>
+        <div class="panel-actions">
+            <button type="button" onclick="sendChat()">Send</button>
+            <button type="button" onclick="toggleMessagePanel()">Close</button>
+        </div>
+    </div>
+
+    <div class="save-panel" id="save-panel">
+        <h3>Save a product</h3>
+        <input type="text" id="save-product-name" placeholder="Product name">
+        <textarea id="save-note" placeholder="Add a note (optional)"></textarea>
+        <div class="panel-actions">
+            <button type="button" onclick="saveProduct()">Save</button>
+            <button type="button" onclick="toggleSavePanel()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMessagePanel() {
+            const panel = document.getElementById('message-panel');
+            const savePanel = document.getElementById('save-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') savePanel.style.display = 'none';
+        }
+
+        function toggleSavePanel() {
+            const panel = document.getElementById('save-panel');
+            const messagePanel = document.getElementById('message-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') messagePanel.style.display = 'none';
+        }
+
+        function sendChat() {
+            const input = document.getElementById('chat-text');
+            if (!input.value.trim()) {
+                alert('Please type a message first.');
+                return;
+            }
+            alert('Message sent: ' + input.value.trim());
+            input.value = '';
+            toggleMessagePanel();
+        }
+
+        function saveProduct() {
+            const nameEl = document.getElementById('save-product-name');
+            const noteEl = document.getElementById('save-note');
+            const productName = nameEl.value.trim();
+            if (!productName) {
+                alert('Please enter a product name to save.');
+                return;
+            }
+            const saved = JSON.parse(localStorage.getItem('farmfresh_saved_products') || '[]');
+            saved.push({
+                name: productName,
+                note: noteEl.value.trim(),
+                page: location.pathname,
+                savedAt: new Date().toISOString()
+            });
+            localStorage.setItem('farmfresh_saved_products', JSON.stringify(saved));
+            alert('Saved "' + productName + '" successfully.');
+            nameEl.value = '';
+            noteEl.value = '';
+            toggleSavePanel();
+        }
+    </script>
+    <!-- end shared chat/save controls -->
+
+</body>
+</html>
