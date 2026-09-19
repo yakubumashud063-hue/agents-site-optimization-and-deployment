@@ -3,378 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farm Products</title>
+    <title>FarmFresh | Fresh farm produce & local delivery</title>
+    <meta name="description" content="FarmFresh sells fresh fruits, vegetables, dairy, livestock and farm essentials with fast local delivery.">
     <link rel="stylesheet" href="/static/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            background-image: url('/static/images/veges.jpg');
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
-            color: #152911;
-        }
-
-        header {
-            background-color: rgba(76, 175, 80, 0.9);
-            color: white;
-            padding: 1rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
-
-        .logo img {
-            display: block;
-            max-width: 100%;
-            height: 50px;
-        }
-       
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            position: relative;
-        }
-
-        .header-actions button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .message-panel {
-            position: absolute;
-            top: 60px;
-            right: 0;
-            width: 320px;
-            background-color: rgba(255, 255, 255, 0.95);
-            color: #152911;
-            border-radius: 10px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-            padding: 1rem;
-            display: none;
-            z-index: 20;
-        }
-
-        .message-panel textarea {
-            width: 100%;
-            height: 100px;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: vertical;
-            margin-bottom: 0.75rem;
-        }
-
-        .message-panel .message-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-        .message-panel .message-actions button {
-            min-width: 80px;
-        }
-
-        .chat-button, .add-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .chat-button:hover, .add-button:hover, #save-button:hover {
-            background-color: #388E3C;
-        }
-
-        .search-bar {
-            flex: 1;
-            margin-left: 1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .hero {
-            text-align: center;
-            padding: 5rem 2rem;
-            background-color: rgba(244, 244, 244, 0.8);
-            margin: 2rem;
-            border-radius: 10px;
-        }
-
-        .btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 0.5rem 1rem;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        section {
-            padding: 2rem;
-        }
-
-        .category-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-
-        .service-container, .product-container {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .category-item, .service-item, .product-item {
-            background-color: rgba(232, 232, 232, 0.8);
-            padding: 1rem;
-            text-align: center;
-            border-radius: 5px;
-            transition: transform 0.3s;
-        }
-
-        .category-item:hover, .service-item:hover, .product-item:hover {
-            transform: scale(1.05);
-        }
-
-        footer {
-            background-color: rgba(51, 51, 51, 0.9);
-            color: white;
-            text-align: center;
-            padding: 1rem 0;
-        }
-
-        .footer-actions {
-            display: none;
-        }
-        
-    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <img src="/static/images/logo.png" alt="FarmFresh Logo">
-            </div>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="#category">Categories</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#about">About</a></li>
+    <header class="site-header">
+        <div class="container navbar">
+            <a href="/" class="brand">
+                <img src="/static/images/logo.png" alt="FarmFresh logo" class="brand-mark">
+                <span>FarmFresh</span>
+            </a>
+
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="/">Home</a>
+                <a href="/products">Products</a>
+                <a href="/cart">Cart ({{ cart_count|default(0) }})</a>
+                <a href="/contact">Contact</a>
                 {% if is_logged_in %}
-                    <li style="color: #fff;">Welcome, {{ username }}!</li>
-                    <li><a href="/logout">Logout</a></li>
+                    <a href="/dashboard">Dashboard</a>
+                    {% if is_admin %}
+                        <a href="/admin">Admin</a>
+                    {% endif %}
+                    <a href="/logout">Logout</a>
                 {% else %}
-                    <li><a href="/register">Register</a></li>
-                    <li><a href="/login">Login</a></li>
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
                 {% endif %}
-            </ul>
-            
-        </nav>
-        <div class="header-actions">
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search...">
-            </div>
-            {% if is_logged_in %}
-                <button class="add-button" id="open-modal" onclick="openUploadForm()">+</button>
-            {% endif %}
-            <button id="save-button" class="save-button" type="button" onclick="toggleSavePanel()" title="Save">💾</button>
-            <button id="chat-button" class="chat-button" onclick="toggleMessagePanel()">💬</button>
-            <div class="message-panel" id="message-panel">
-                <h3>Send a message</h3>
-                <textarea id="message-text" placeholder="Type your message..."></textarea>
-                <div class="message-actions">
-                    <button type="button" onclick="sendMessage()">Send</button>
-                    <button type="button" onclick="toggleMessagePanel()">Close</button>
-                </div>
-            </div>
-            <div class="save-panel" id="save-panel">
-                <h3>Save a product</h3>
-                <input type="text" id="save-product-name" placeholder="Product name">
-                <textarea id="save-note" placeholder="Add a note (optional)"></textarea>
-                <div class="panel-actions">
-                    <button type="button" onclick="saveProduct()">Save</button>
-                    <button type="button" onclick="toggleSavePanel()">Close</button>
-                </div>
-            </div>
+            </nav>
         </div>
-        <div class="upload-container" id="upload-container" style="display: none;">
-            <form id="upload-form">
-                <h2>Upload Product for Sale</h2>
-                <input type="text" id="product-name" placeholder="Product Name" required>
-                <input type="number" id="product-price" placeholder="Price ($)" step="0.01" required>
-                <textarea id="product-description" placeholder="Product Description (optional)"></textarea>
-                <input type="file" id="product-image" accept="image/*" required>
-                <button type="submit">Upload</button>
-                <button type="button" onclick="closeUploadForm()">Cancel</button>
-            </form>
-        </div>
-        
     </header>
 
-    <section id="home" class="hero">
-        <h1>Welcome to FarmFresh</h1>
-        <p>Fresh and organic products delivered directly from our farm to your table.</p>
-        <a href="#product" class="btn">Shop Now</a>
-    </section>
+    <main>
+        <section class="hero">
+            <div class="container hero-inner">
+                <div class="hero-copy">
+                    <span class="eyebrow">Fresh from the farm</span>
+                    <h1>Healthy food, trusted sourcing, and local delivery.</h1>
+                    <p>Shop fresh fruits, vegetables, dairy, meats, and farm essentials from trusted producers. We keep your food fresh, your order simple, and your checkout secure.</p>
+                    <div class="hero-actions">
+                        <a href="/products" class="btn btn-primary">Shop now</a>
+                        <a href="/contact" class="btn btn-secondary">Talk to sales</a>
+                    </div>
+                    <div class="hero-metrics">
+                        <div class="metric">
+                            <strong>2k+</strong>
+                            <span>Orders delivered</span>
+                        </div>
+                        <div class="metric">
+                            <strong>48h</strong>
+                            <span>Fast dispatch</span>
+                        </div>
+                        <div class="metric">
+                            <strong>99.9%</strong>
+                            <span>Customer satisfaction</span>
+                        </div>
+                    </div>
+                </div>
 
-    <section id="category">
-        <h2>Our Categories</h2>
-        <div class="category-container">
-            <div class="category-item"><a href="/fruits">Fruits</a></div>
-            <div class="category-item"><a href="/vegetables">Vegetables</a></div>
-            <div class="category-item"><a href="/livestock">Livestock</a></div>
-            <div class="category-item"><a href="/dairy">Dairy</a></div>
-            <div class="category-item"><a href="/seeds_tools">Seeds & Tools</a></div>
-            <div class="category-item"><a href="/meats">Meats</a></div>
-            <div class="category-item"><a href="/plus">+</a></div>
+                <div class="hero-visual">
+                    <div class="hero-card">
+                        <img src="/static/images/vegetables.jpg" alt="Fresh produce collection">
+                        <div class="hero-card-info">
+                            <div>
+                                <strong>Harvest Box</strong>
+                                <div>Mixed produce bundle</div>
+                            </div>
+                            <span class="price-tag">GHC 120</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="category">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Shop by category</h2>
+                    <p>Choose the products you need from our farm essentials range.</p>
+                </div>
+
+                <div class="category-grid">
+                    <a href="/fruits" class="category-card">
+                        <div class="icon">🍋</div>
+                        <h3>Fruits</h3>
+                        <p>Fresh-picked and ready to enjoy.</p>
+                    </a>
+                    <a href="/vegetables" class="category-card">
+                        <div class="icon">🥬</div>
+                        <h3>Vegetables</h3>
+                        <p>Farm vegetables for every meal.</p>
+                    </a>
+                    <a href="/livestock" class="category-card">
+                        <div class="icon">🐄</div>
+                        <h3>Livestock</h3>
+                        <p>Healthy and ethically raised animals.</p>
+                    </a>
+                    <a href="/dairy" class="category-card">
+                        <div class="icon">🥛</div>
+                        <h3>Dairy</h3>
+                        <p>Milk, eggs, and farm dairy essentials.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section benefits">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Why shoppers choose FarmFresh</h2>
+                    <p>Reliable sourcing and a cleaner buying experience for homes and businesses.</p>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="summary-box">
+                        <h3>Freshness first</h3>
+                        <p>We stock what is harvested and packed daily to keep produce fresh and market-ready.</p>
+                    </div>
+                    <div class="summary-box">
+                        <h3>Transparent pricing</h3>
+                        <p>Simple, upfront pricing without confusing upsells or hidden fees.</p>
+                    </div>
+                    <div class="summary-box">
+                        <h3>Best-in-class support</h3>
+                        <p>Dedicated support for farm buyers, recurring orders, and delivery coordination.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="product">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Featured products</h2>
+                    <p>Our most popular farm items for homes and food businesses.</p>
+                </div>
+
+                <div class="product-grid">
+                    {% if featured_products %}
+                        {% for product in featured_products %}
+                            <article class="product-card" data-name="{{ product.name }}" data-category="{{ product.category }}">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                                <div class="product-card-body">
+                                    <h3>{{ product.name }}</h3>
+                                    <p>{{ product.description }}</p>
+                                    <div class="product-meta">
+                                        <span class="price-tag">GHC {{ product.price }}</span>
+                                        <span>{{ product.category }}</span>
+                                    </div>
+                                    <button type="button" class="cart-button" data-product-id="{{ product.id }}">Add to cart</button>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    {% else %}
+                        <p>No products found yet. Log in and upload the first listing.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="services">
+            <div class="container">
+                <div class="section-header">
+                    <h2>More value for your business</h2>
+                    <p>Beyond products, we help agriculture businesses grow and operate better.</p>
+                </div>
+
+                <div class="service-grid">
+                    <article class="service-card">
+                        <h3>Delivery services</h3>
+                        <p>Reliable farm-to-door transport for bulk and local orders.</p>
+                    </article>
+                    <article class="service-card">
+                        <h3>Farming consultations</h3>
+                        <p>Expert advice for production planning, crop management, and farm operations.</p>
+                    </article>
+                    <article class="service-card">
+                        <h3>Workshops & training</h3>
+                        <p>Practical farm education and modern agriculture coaching.</p>
+                    </article>
+                    <article class="service-card">
+                        <h3>Equipment support</h3>
+                        <p>Simple sourcing for seeds, inputs, and essential farm tools.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <h3>FarmFresh</h3>
+                <p>Fresh food, fair prices, and better agricultural support for households and businesses.</p>
+            </div>
+            <div>
+                <h4>Browse</h4>
+                <div class="footer-links">
+                    <a href="/products">Products</a>
+                    <a href="/fruits">Fruits</a>
+                    <a href="/vegetables">Vegetables</a>
+                </div>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <div class="footer-links">
+                    <a href="/contact">Contact</a>
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                </div>
+            </div>
         </div>
-    </section>
-
-    <section id="services">
-        <h2>Our Services</h2>
-        <div class="service-container">
-            <div class="service-item"><a href="/delivery_services">Delivery Services</a></div>
-            <div class="service-item"><a href="/farming_consultations">Farming Consultations</a></div>
-            <div class="service-item"><a href="/workshops_training">Workshops & Training</a></div>
-        </div>
-    </section>
-
-    <section id="product">
-        <h2>Products</h2>
-        <div class="product-container">
-            <div class="product-item">Food Stuffs</div>
-            <div class="product-item">animals</div>
-            <div class="product-item">Equipments</div>
-        </div>
-    </section>
-
-    <section id="about">
-        <h2>About Us</h2>
-        <p>Learn more about our mission and values at FarmFresh.</p>
-    </section>
-
-    <footer>
-        <p>&copy; 2025 FarmFresh. All rights reserved.</p>
+        <div class="container footer-bottom">&copy; 2025 FarmFresh. All rights reserved.</div>
     </footer>
 
     <script>
-        function openUploadForm() {
-            const uploadContainer = document.getElementById('upload-container');
-            uploadContainer.style.display = uploadContainer.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function closeUploadForm() {
-            const uploadContainer = document.getElementById('upload-container');
-            uploadContainer.style.display = 'none';
-            document.getElementById('upload-form').reset();
-        }
-
-        document.getElementById('upload-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData();
-            formData.append('product-name', document.getElementById('product-name').value);
-            formData.append('product-price', document.getElementById('product-price').value);
-            formData.append('product-description', document.getElementById('product-description').value);
-            
-            try {
-                const response = await fetch('/upload', { method: 'POST', body: formData });
-                const data = await response.json();
-                if (response.ok) {
-                    alert(data.message);
-                    closeUploadForm();
-                } else {
-                    alert('Error: ' + data.error);
+        document.querySelectorAll('.cart-button').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const productId = button.dataset.productId;
+                try {
+                    const response = await fetch('/cart/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ product_id: productId })
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.success) {
+                        const navLinks = document.querySelectorAll('.site-nav a');
+                        navLinks.forEach((link) => {
+                            if (link.textContent.includes('Cart')) {
+                                link.textContent = `Cart (${data.cart_count})`;
+                            }
+                        });
+                        button.textContent = 'Added';
+                        button.disabled = true;
+                    }
+                } catch (error) {
+                    console.error('Add to cart failed', error);
                 }
-            } catch (error) {
-                alert('Error uploading product: ' + error.message);
-            }
-        });
-
-        function toggleMessagePanel() {
-            const panel = document.getElementById('message-panel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function sendMessage() {
-            const messageText = document.getElementById('message-text');
-            if (!messageText.value.trim()) {
-                alert('Please enter a message first.');
-                return;
-            }
-            alert('Message sent: ' + messageText.value.trim());
-            messageText.value = '';
-            toggleMessagePanel();
-        }
-
-        function toggleSavePanel() {
-            const panel = document.getElementById('save-panel');
-            const messagePanel = document.getElementById('message-panel');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-            if (panel.style.display === 'block') messagePanel.style.display = 'none';
-        }
-
-        function saveProduct() {
-            const nameEl = document.getElementById('save-product-name');
-            const noteEl = document.getElementById('save-note');
-            const productName = nameEl.value.trim();
-            if (!productName) {
-                alert('Please enter a product name to save.');
-                return;
-            }
-            const saved = JSON.parse(localStorage.getItem('farmfresh_saved_products') || '[]');
-            saved.push({
-                name: productName,
-                note: noteEl.value.trim(),
-                page: location.pathname,
-                savedAt: new Date().toISOString()
             });
-            localStorage.setItem('farmfresh_saved_products', JSON.stringify(saved));
-            alert('Saved '"' + productName + '" successfully.');
-            nameEl.value = '';
-            noteEl.value = '';
-            toggleSavePanel();
-        }
+        });
     </script>
 </body>
 </html>

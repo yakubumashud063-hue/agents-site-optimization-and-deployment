@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - FarmFresh</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; background-color: #f4f7f2; color: #1f3315; }
+        header { background-color: #4CAF50; color: white; padding: 1rem; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        .nav-links { list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0; }
+        .nav-links a { color: white; text-decoration: none; }
+        main { padding: 2rem; max-width: 900px; margin: 0 auto; }
+        .panel { background: white; padding: 1.5rem; border-radius: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
+        label { display: block; margin: 0.75rem 0 0.25rem; }
+        input, textarea { width: 100%; padding: 0.85rem; border: 1px solid #ccc; border-radius: 8px; font: inherit; }
+        button { background: #4CAF50; color: white; border: none; padding: 0.95rem 1.25rem; border-radius: 10px; cursor: pointer; margin-top: 1rem; }
+        button:hover { background: #388E3C; }
+        .message { padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
+        .message.success { background: #dff0d8; color: #3c763d; }
+        .message.error { background: #f8d7da; color: #842029; }
+        footer { background-color: #334228; color: white; text-align: center; padding: 1rem; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: white; text-decoration: none; font-weight: 700;">FarmFresh</a></div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart">Cart</a></li>
+                {% if is_logged_in %}
+                    <li><a href="/orders">My Orders</a></li>
+                    {% if is_admin %}
+                        <li><a href="/admin">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/register">Register</a></li>
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="panel">
+            <h1>Contact FarmFresh</h1>
+            {% if error %}<div class="message error">{{ error }}</div>{% endif %}
+            {% if success %}<div class="message success">{{ success }}</div>{% endif %}
+            <p>Need help with an order? Want to speak with a farmer? Send us a message and we’ll get back to you quickly.</p>
+            <form method="POST">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" required>
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" required>
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+            <div class="notice">
+                <p><strong>Office hours:</strong> Mon - Sat, 8am - 6pm</p>
+                <p><strong>Phone:</strong> +233 0209957019</p>
+                <p><strong>Email:</strong> chantbilijih063@gmail.com</p>
+            </div>
+        </div>
+    </main>
+    <footer>
+        &copy; 2025 FarmFresh. All rights reserved.
+    </footer>
+</body>
+</html>

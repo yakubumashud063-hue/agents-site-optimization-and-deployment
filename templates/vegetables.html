@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fruits - FarmFresh</title>
+    <title>{{ category_name }} - FarmFresh</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
         body {
@@ -59,6 +59,13 @@
         .fruit-item p {
             font-size: 0.9rem;
             color: #555;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
         }
 
         .fruit-item button {
@@ -167,7 +174,7 @@
 </head>
 <body>
     <header>
-        <h1>Fruits - FarmFresh</h1>
+        <h1>{{ category_name }} - FarmFresh</h1>
     </header>
     <main>
         <h2>Check out our Fresh crops</h2>
@@ -181,117 +188,20 @@
         
     </p>
         <div class="fruit-container">
-            <div class="fruit-item">
-                <img src="/static/images/potatoes.jpg" alt="potatoes">
-                <h3>potatoes</h3>
-                <p>sweet tubers and crisp potatoes perfect for lunch.</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/beetroot.jpg" alt="beetroot">
-                <h3>beetroot</h3>
-                <p>Sweet and nice beetroot to fuel your day with energy.</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/Carot.jpg" alt="Carot">
-                <h3>Carots</h3>
-                <p>Fresh oranges loaded with vitamin for a healthy boost.</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/green peas.jpg" alt="green peas">
-                <h3>green peas</h3>
-                <p>Delicious and sweet greenpeas perfect for dinner.</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/spepper.jpg" alt="Sweet pepper">
-                <h3>sweetpepper</h3>
-                <p>Delicious and sweet pepper perfect for desserts.</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/okro.jpg" alt="okro">
-                    <h3>okro</h3>
-                    <p>Delicious and jolly okra perfect for okro soup.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/cumber.jpg" alt="cumber">
-                    <h3>Cumcumber</h3>
-                    <p>Neccessary for your vitality.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/onion.jpg" alt="onion">
-                    <h3>onion</h3>
-                    <p>Delicious and hot onion Good for your immune system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/cabbage.jpg." alt="cabbage">
-                    <h3>cabbage</h3>
-                    <p>Delicious durin perfect for desserts.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/broccoli.jpg" alt="broccoli">
-                    <h3>broccoli</h3>
-                    <p>sweet and Good broccoli for your salad.</p>
-                    <button>Add to Cart</button>
-            </div>
-                <div class="fruit-item">
-                    <img src="/static/images/Spinach.jpg" alt="Spinach">
-                    <h3>Spinach</h3>
-                    <p>Delicious and tasty Spinachfor your souce.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/lettuce.jpg" alt="lettuce">
-                    <h3>lettuce</h3>
-                    <p>Delicious and fine lettuce for your stew.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/leav.jpg" alt="leav">
-                    <h3>leaves</h3>
-                    <p>Delicious and sweet pears Good for your  system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/apples.jpg" alt="apples">
-                    <h3>apples</h3>
-                    <p>Delicious and sweet  perfect for your immune system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/lemon.jpg" alt="lemon">
-                    <h3>lemon</h3>
-                    <p>Good and sweet lemons perfect for your immune system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/strawberries.gif" alt="Strawberries">
-                    <h3>strawberries</h3>
-                    <p>Delicious and sweet berries perfect for your immune system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/Kiwi.jpg" alt="Kiwi">
-                <h3>Kiwi</h3>
-                <p>Nice and sweet Kiwi for your health.</p>
-                <button>Add to Cart</button>
+            {% if category_products %}
+                {% for product in category_products %}
+                    <div class="fruit-item">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.description }}</p>
+                        <p class="price">GHC {{ "%.2f"|format(product.price|float) }}</p>
+                        <button type="button" class="add-to-cart" data-product-id="{{ product.id }}">Add to Cart</button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No vegetables found in this category yet. Please check back later.</p>
+            {% endif %}
         </div>
-        <div class="fruit-item">
-            <img src="/static/images/rasberries.jpg" alt="rasberries">
-            <h3>rasberries</h3>
-            <p>healthy and sweet rasberries perfect for your immune system.</p>
-            <button>Add to Cart</button>
-    </div>
-
-        </div>
-
     </main>
 
     <footer>
@@ -338,6 +248,29 @@
             panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
             if (panel.style.display === 'block') messagePanel.style.display = 'none';
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const productId = button.dataset.productId;
+                    try {
+                        const response = await fetch('/cart/add', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ product_id: productId })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            alert('Added to cart successfully!');
+                        } else {
+                            alert(data.error || 'Unable to add item to cart.');
+                        }
+                    } catch (error) {
+                        alert('Unable to add item to cart.');
+                    }
+                });
+            });
+        });
 
         function sendChat() {
             const input = document.getElementById('chat-text');

@@ -1,0 +1,17 @@
+{
+  "chantbilijih063@gmail.com": {
+    "password": "Chantiba0630@",
+    "email": "chantbilijih063@gmail.com",
+    "role": "user"
+  },
+  "mashud": {
+    "password": "Root0630@",
+    "email": "mashud@example.com",
+    "role": "admin"
+  },
+  "admin": {
+    "password": "admin",
+    "email": "admin@example.com",
+    "role": "admin"
+  }
+}

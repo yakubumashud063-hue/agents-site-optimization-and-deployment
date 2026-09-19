@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FarmFresh</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; background-color: #f4f7f2; color: #1f3315; }
+        header { background-color: #4CAF50; color: white; padding: 1rem; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        .nav-links { list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0; }
+        .nav-links a { color: white; text-decoration: none; }
+        main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .dashboard-header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; align-items: center; }
+        .dashboard-header h1 { margin: 0; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+        .stat-card { background: white; padding: 1.25rem; border-radius: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
+        .stat-card h2 { margin: 0 0 0.5rem; font-size: 1.1rem; color: #4CAF50; }
+        .stat-card p { margin: 0; font-size: 2rem; font-weight: 700; }
+        .panel { background: white; padding: 1.5rem; border-radius: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+        .panel h2 { margin-top: 0; }
+        .admin-panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .admin-card { background: white; padding: 1.25rem; border-radius: 14px; border: 1px solid #dfe7e0; text-decoration: none; color: #1f3315; box-shadow: 0 8px 18px rgba(0,0,0,0.06); transition: transform .2s, box-shadow .2s; }
+        .admin-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.12); }
+        .admin-card h3 { margin: 0 0 0.5rem; color: #4CAF50; }
+        .admin-card p { margin: 0; font-size: 0.95rem; line-height: 1.5; }
+        .status-label { display: inline-block; font-size: 0.8rem; padding: 0.25rem 0.6rem; border-radius: 999px; background: #e8f5e9; color: #2e7d32; }
+        .inventory-badge { display: inline-block; font-size: 0.8rem; padding: 0.25rem 0.6rem; border-radius: 999px; background: #fff4e5; color: #e65100; margin-left: 0.5rem; }
+        .action-link { display: inline-block; text-decoration: none; background: #4CAF50; color: white; padding: 0.5rem 0.85rem; border-radius: 8px; }
+        .action-link:hover { background: #388E3C; }
+        .grid { display: grid; gap: 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+        label { display: block; margin: 0.75rem 0 0.25rem; }
+        input, textarea, select { width: 100%; padding: 0.85rem; border: 1px solid #ccc; border-radius: 8px; font: inherit; }
+        button { background: #4CAF50; color: white; border: none; padding: 0.95rem 1.25rem; border-radius: 10px; cursor: pointer; margin-top: 1rem; }
+        button:hover { background: #388E3C; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 0.9rem 0.75rem; border-bottom: 1px solid #e0e0e0; text-align: left; }
+        .table th { background: #eef7ed; }
+        .action-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+        .secondary-button { background: #555; }
+        .secondary-button:hover { background: #333; }
+        .danger-button { background: #d32f2f; }
+        .danger-button:hover { background: #b71c1c; }
+        .order-badge { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 999px; background: #e8f5e9; color: #2e7d32; font-size: 0.85rem; }
+        .message { padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
+        .message.error { background: #f8d7da; color: #842029; }
+        .message.success { background: #d1e7dd; color: #0f5132; }
+        footer { background-color: #334228; color: white; text-align: center; padding: 1rem; margin-top: 2rem; }
+        @media (max-width: 768px) { .dashboard-header { flex-direction: column; align-items: flex-start; } }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: white; text-decoration: none; font-weight: 700;">FarmFresh</a></div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/orders">My Orders</a></li>
+                <li><a href="/cart">Cart ({{ cart_count|default(0) }})</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li style="color: white;">Welcome, {{ username }}!</li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="dashboard-header">
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>Manage products, review orders, and monitor FarmFresh activity.</p>
+            </div>
+            <div style="text-align:right;">
+                <p style="margin:0; color:#fff;">Signed in as <strong>{{ username }}</strong></p>
+            </div>
+        </div>
+
+        {% if message %}
+            <div class="message error">{{ message }}</div>
+        {% endif %}
+
+        <div class="stats">
+            <div class="stat-card">
+                <h2>Total Products</h2>
+                <p>{{ products|length }}</p>
+            </div>
+            <div class="stat-card">
+                <h2>Total Orders</h2>
+                <p>{{ orders|length }}</p>
+            </div>
+            <div class="stat-card">
+                <h2>Registered Users</h2>
+                <p>{{ users_count }}</p>
+            </div>
+        </div>
+
+        <div class="admin-panel-grid">
+            <a class="admin-card" href="#product-management">
+                <h3>Product Management</h3>
+                <p>Add, edit, delete products. Change status and stock levels.</p>
+            </a>
+            <a class="admin-card" href="#order-management">
+                <h3>Order Management</h3>
+                <p>View active and past orders. Update order status and customer details.</p>
+            </a>
+            <a class="admin-card" href="#user-management">
+                <h3>User Management</h3>
+                <p>Review customers and sellers. Activate or deactivate accounts.</p>
+            </a>
+            <a class="admin-card" href="#reports">
+                <h3>Reports</h3>
+                <p>See sales volume, best sellers, and inventory performance.</p>
+            </a>
+            <a class="admin-card" href="#notifications">
+                <h3>Notifications</h3>
+                <p>Track low stock alerts, new messages, and recent orders.</p>
+            </a>
+        </div>
+
+        <section class="panel" id="user-management">
+            <h2>Manage Users</h2>
+            {% if user_profiles %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Orders</th>
+                            <th>Ads</th>
+                            <th>Profile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in user_profiles %}
+                            <tr>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.role }}</td>
+                                <td>{{ 'Active' if user.active else 'Inactive' }}</td>
+                                <td>{{ user.orders }}</td>
+                                <td>{{ user.ads }}</td>
+                                <td>
+                                    <a class="action-link" href="/profile/{{ user.username }}">View Profile</a>
+                                    <form method="POST" style="display:inline-block; margin-left:0.5rem; margin-bottom:0;">
+                                        <input type="hidden" name="action" value="toggle_user_active">
+                                        <input type="hidden" name="target_username" value="{{ user.username }}">
+                                        <button type="submit" class="secondary-button" style="padding:0.45rem 0.8rem;">{{ 'Deactivate' if user.active else 'Activate' }}</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No registered users found.</p>
+            {% endif %}
+        </section>
+
+        <div class="grid">
+            <section class="panel">
+                <h2>Create New Product</h2>
+                <form method="POST">
+                    <input type="hidden" name="action" value="create">
+                    <div class="form-grid">
+                        <div>
+                            <label for="name">Product Name</label>
+                            <input id="name" name="name" type="text" required>
+                        </div>
+                        <div>
+                            <label for="price">Price (GHC)</label>
+                            <input id="price" name="price" type="number" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div>
+                            <label for="category">Category</label>
+                            <select id="category" name="category" required>
+                                <option value="Fruits">Fruits</option>
+                                <option value="Vegetables">Vegetables</option>
+                                <option value="Livestock">Livestock</option>
+                                <option value="Dairy">Dairy</option>
+                                <option value="Seeds & Tools">Seeds & Tools</option>
+                                <option value="Meats">Meats</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div>
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="Published">Published</option>
+                                <option value="Draft">Draft</option>
+                                <option value="Out of Stock">Out of Stock</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="stock_quantity">Stock Quantity</label>
+                            <input id="stock_quantity" name="stock_quantity" type="number" min="0" value="0">
+                        </div>
+                    </div>
+                    <button type="submit">Add Product</button>
+                </form>
+            </section>
+
+            <section class="panel" id="order-management">
+                <h2>Recent Orders</h2>
+                {% if orders %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>User</th>
+                                <th>Total</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Status</th>
+                                <th>Update</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_id }}</td>
+                                    <td>{{ order.user }}</td>
+                                    <td>GHC{{ order.total }}</td>
+                                    <td>{{ order.created_at }}</td>
+                                    <td>{{ order['items']|length }}</td>
+                                    <td>{{ order.status|default('Pending') }}</td>
+                                    <td>
+                                        <form method="POST" style="display:inline-block; margin-bottom:0.3rem;">
+                                            <input type="hidden" name="action" value="order_update">
+                                            <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                                            <select name="status" style="width:100%; margin-bottom:0.5rem;">
+                                                <option value="Pending"{% if order.status == 'Pending' %} selected{% endif %}>Pending</option>
+                                                <option value="Confirmed"{% if order.status == 'Confirmed' %} selected{% endif %}>Confirmed</option>
+                                                <option value="Shipped"{% if order.status == 'Shipped' %} selected{% endif %}>Shipped</option>
+                                                <option value="Delivered"{% if order.status == 'Delivered' %} selected{% endif %}>Delivered</option>
+                                                <option value="Cancelled"{% if order.status == 'Cancelled' %} selected{% endif %}>Cancelled</option>
+                                            </select>
+                                            <button type="submit">Update</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No orders have been placed yet.</p>
+                {% endif %}
+            </section>
+        </div>
+
+        <section class="panel" id="product-management">
+            <h2>Manage Products</h2>
+            {% if products %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Seller</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td>
+                                    <strong>{{ product.name }}</strong><br>
+                                    <small>{{ product.description }}</small>
+                                </td>
+                                <td>{{ product.category }}</td>
+                                <td>GHC{{ product.price }}</td>
+                                <td>{{ product.uploaded_by }}</td>
+                                <td>
+                                    <form method="POST" style="display:inline-block; margin-bottom:0.5rem;">
+                                        <input type="hidden" name="action" value="update">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <label for="name-{{ product.id }}" class="sr-only">Name</label>
+                                        <input id="name-{{ product.id }}" type="text" name="name" value="{{ product.name }}" placeholder="Name" required style="width:100%; margin-bottom:0.5rem;">
+                                        <label for="price-{{ product.id }}" class="sr-only">Price</label>
+                                        <input id="price-{{ product.id }}" type="number" step="0.01" name="price" value="{{ product.price }}" required style="width:100%; margin-bottom:0.5rem;">
+                                        <label for="category-{{ product.id }}" class="sr-only">Category</label>
+                                        <input id="category-{{ product.id }}" type="text" name="category" value="{{ product.category }}" style="width:100%; margin-bottom:0.5rem;">
+                                        <label for="description-{{ product.id }}" class="sr-only">Description</label>
+                                        <textarea id="description-{{ product.id }}" name="description" rows="2" style="width:100%; margin-bottom:0.5rem;">{{ product.description }}</textarea>
+                                        <label for="status-{{ product.id }}" class="sr-only">Status</label>
+                                        <select id="status-{{ product.id }}" name="status" style="width:100%; margin-bottom:0.5rem;">
+                                            <option value="Published"{% if product.status == 'Published' %} selected{% endif %}>Published</option>
+                                            <option value="Draft"{% if product.status == 'Draft' %} selected{% endif %}>Draft</option>
+                                            <option value="Out of Stock"{% if product.status == 'Out of Stock' %} selected{% endif %}>Out of Stock</option>
+                                        </select>
+                                        <label for="stock-{{ product.id }}" class="sr-only">Stock Quantity</label>
+                                        <input id="stock-{{ product.id }}" name="stock_quantity" type="number" min="0" value="{{ product.stock_quantity|default(0) }}" style="width:100%; margin-bottom:0.5rem;">
+                                        <button type="submit">Update</button>
+                                    </form>
+                                    <form method="POST" style="display:inline-block;">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <button type="submit" class="danger-button">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No products are available to manage yet.</p>
+            {% endif %}
+        </section>
+
+        <section class="panel" id="reports">
+            <h2>Reports</h2>
+            <p>Sales overview, best-selling categories, and inventory performance are available here.</p>
+            <ul>
+                <li>Total sales: GHC {{ total_sales }}</li>
+                <li>Published products: {{ products | selectattr('status', 'equalto', 'Published') | list | length }}</li>
+                <li>Recent orders: {{ orders|length }}</li>
+            </ul>
+        </section>
+
+        <section class="panel" id="notifications">
+            <h2>Notifications</h2>
+            <p>Low stock and new message alerts will appear here.</p>
+            <ul>
+                {% if low_stock_products %}
+                    {% for product in low_stock_products %}
+                        <li>Low stock: {{ product.name }} ({{ product.stock_quantity|default(0) }} left)</li>
+                    {% endfor %}
+                {% else %}
+                    <li>No low stock items at the moment.</li>
+                {% endif %}
+            </ul>
+        </section>
+    </main>
+    <footer>
+        &copy; 2025 FarmFresh. All rights reserved.
+    </footer>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - FarmFresh</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container navbar">
+            <a href="/" class="brand">
+                <img src="/static/images/logo.png" alt="FarmFresh logo" class="brand-mark">
+                <span>FarmFresh</span>
+            </a>
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="/">Home</a>
+                <a href="/products">Products</a>
+                <a href="/cart">Cart</a>
+                <a href="/contact">Contact</a>
+                {% if is_logged_in %}
+                    <a href="/dashboard">Dashboard</a>
+                    {% if is_admin %}
+                        <a href="/admin">Admin</a>
+                    {% endif %}
+                    <a href="/logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <div class="container">
+            {% if error %}
+                <div class="message error">{{ error }}</div>
+            {% endif %}
+            {% if success %}
+                <div class="message success">{{ success }}</div>
+                <div class="checkout-card" style="margin-bottom: 2rem;">
+                    <h2>Order confirmation</h2>
+                    <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+                    <p><strong>Customer:</strong> {{ order.customer }}</p>
+                    <p><strong>Payment method:</strong> {{ order.payment_method }}</p>
+                    <p><strong>Total:</strong> GHC{{ order.total }}</p>
+                    <p><strong>Address:</strong> {{ order.address }}</p>
+                    <p><strong>Phone:</strong> {{ order.phone }}</p>
+                    <a href="/products" class="primary-btn" style="margin-top: 1rem;">Continue shopping</a>
+                </div>
+            {% else %}
+                <div class="checkout-layout">
+                    <section class="checkout-card">
+                        <div class="section-header">
+                            <h2>Shipping & payment</h2>
+                            <p>Complete your checkout securely.</p>
+                        </div>
+
+                        <form method="POST">
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label for="name">Full name</label>
+                                    <input id="name" name="name" type="text" required>
+                                </div>
+                                <div class="field">
+                                    <label for="email">Email</label>
+                                    <input id="email" name="email" type="email" required>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="phone">Phone number</label>
+                                <input id="phone" name="phone" type="tel" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="address">Delivery address</label>
+                                <textarea id="address" name="address" rows="4" required></textarea>
+                            </div>
+
+                            <div class="field">
+                                <label>Payment method</label>
+                                <div class="payment-row">
+                                    <label class="payment-option">
+                                        <input type="radio" name="payment_method" value="Cash on delivery" checked>
+                                        <span>Cash on delivery</span>
+                                    </label>
+                                    <label class="payment-option">
+                                        <input type="radio" name="payment_method" value="Card">
+                                        <span>Card</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="card-fields" style="display: none;">
+                                <div class="field">
+                                    <label for="card_name">Name on card</label>
+                                    <input id="card_name" name="card_name" type="text">
+                                </div>
+                                <div class="field">
+                                    <label for="card_number">Card number</label>
+                                    <input id="card_number" name="card_number" type="text" inputmode="numeric" placeholder="1234 5678 9012 3456">
+                                </div>
+                                <div class="form-grid">
+                                    <div class="field">
+                                        <label for="expiry">Expiry date</label>
+                                        <input id="expiry" name="expiry" type="text" placeholder="MM/YY">
+                                    </div>
+                                    <div class="field">
+                                        <label for="cvv">CVV</label>
+                                        <input id="cvv" name="cvv" type="text" inputmode="numeric" maxlength="4" placeholder="123">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="checkout-actions">
+                                <button type="submit" class="primary-btn">Place order</button>
+                                <a href="/cart" class="secondary-btn">Back to cart</a>
+                            </div>
+                        </form>
+                    </section>
+
+                    <aside class="summary-box">
+                        <h3>Order summary</h3>
+                        <ul class="summary-list">
+                            {% for item in cart_items %}
+                                <li><span>{{ item.quantity }} x {{ item.name }}</span><span>GHC{{ item.subtotal }}</span></li>
+                            {% endfor %}
+                        </ul>
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span>GHC{{ total }}</span>
+                        </div>
+                    </aside>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">&copy; 2025 FarmFresh. All rights reserved.</div>
+    </footer>
+
+    <script>
+        const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+        const cardFields = document.getElementById('card-fields');
+
+        function toggleCardFields() {
+            const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
+            cardFields.style.display = selectedMethod === 'Card' ? 'block' : 'none';
+        }
+
+        paymentRadios.forEach((radio) => radio.addEventListener('change', toggleCardFields));
+        toggleCardFields();
+    </script>
+</body>
+</html>

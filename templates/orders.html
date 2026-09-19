@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - FarmFresh</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; background-color: #f4f7f2; color: #1f3315; }
+        header { background-color: #4CAF50; color: white; padding: 1rem; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        .nav-links { list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0; }
+        .nav-links a { color: white; text-decoration: none; }
+        main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+        .order-card { background: white; padding: 1.5rem; border-radius: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+        .order-card h2 { margin-top: 0; }
+        .order-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: 0.95rem; color: #4a5d3e; }
+        .order-items { margin-top: 1rem; }
+        .order-items li { margin-bottom: 0.6rem; }
+        .order-summary { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e3e8e1; }
+        .order-summary p { margin: 0.4rem 0; }
+        .status-pill { display: inline-block; padding: 0.35rem 0.65rem; border-radius: 999px; background: #e8f5e9; color: #2e7d32; font-size: 0.9rem; }
+        .empty-state { background: white; padding: 2rem; border-radius: 14px; text-align: center; box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
+        .empty-state a { display: inline-block; margin-top: 1rem; background: #4CAF50; color: white; padding: 0.85rem 1.25rem; border-radius: 10px; text-decoration: none; }
+        footer { background-color: #334228; color: white; text-align: center; padding: 1rem; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: white; text-decoration: none; font-weight: 700;">FarmFresh</a></div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart">Cart ({{ cart_count|default(0) }})</a></li>
+                {% if is_admin %}
+                    <li><a href="/admin">Dashboard</a></li>
+                {% endif %}
+                <li><a href="/contact">Contact</a></li>
+                <li style="color: white;">Welcome, {{ username }}!</li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>My Orders</h1>
+        {% if orders %}
+            {% for order in orders %}
+                <article class="order-card">
+                    <div class="order-row">
+                        <div>
+                            <h2>Order #{{ order.order_id }}</h2>
+                            <p>Placed on {{ order.created_at }}</p>
+                        </div>
+                        <div class="status-pill">Completed</div>
+                    </div>
+                    <div class="order-row">
+                        <p><strong>Buyer:</strong> {{ order.customer }}</p>
+                        <p><strong>Total:</strong> GHC{{ order.total }}</p>
+                        <p><strong>Delivery:</strong> {{ order.address }}</p>
+                    </div>
+                    <div class="order-items">
+                        <h3>Items</h3>
+                        <ul>
+                            {% for item in order['items'] %}
+                                <li>{{ item.quantity }} x {{ item.name }} — GHC{{ item.subtotal }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <h2>No orders yet</h2>
+                <p>You haven't placed any orders yet. Browse our market and checkout to create your first order.</p>
+                <a href="/products">Browse Products</a>
+            </div>
+        {% endif %}
+    </main>
+    <footer>
+        &copy; 2025 FarmFresh. All rights reserved.
+    </footer>
+</body>
+</html>

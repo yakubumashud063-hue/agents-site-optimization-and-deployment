@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products - FarmFresh</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container navbar">
+            <a href="/" class="brand">
+                <img src="/static/images/logo.png" alt="FarmFresh logo" class="brand-mark">
+                <span>FarmFresh</span>
+            </a>
+
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="/">Home</a>
+                <a href="/products">Products</a>
+                <a href="/cart">Cart ({{ cart_count|default(0) }})</a>
+                <a href="/contact">Contact</a>
+                {% if is_logged_in %}
+                    <a href="/dashboard">Dashboard</a>
+                    {% if is_admin %}
+                        <a href="/admin">Admin</a>
+                    {% endif %}
+                    <a href="/logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <div class="container">
+            <div class="section-header">
+                <h2>All farm products</h2>
+                <p>Fresh produce, dairy, livestock and essentials for homes and farms.</p>
+            </div>
+
+            <div class="products-toolbar">
+                <div class="search-box">
+                    <span>🔎</span>
+                    <input type="text" id="product-search" placeholder="Search by product or category" aria-label="Search products">
+                </div>
+            </div>
+
+            <div class="product-grid">
+                {% if products %}
+                    {% for product in products %}
+                        <article class="product-card" data-name="{{ product.name }}" data-category="{{ product.category }}">
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                            <div class="product-card-body">
+                                <h3>{{ product.name }}</h3>
+                                <p>{{ product.description }}</p>
+                                <div class="product-meta">
+                                    <span class="price-tag">GHC {{ product.price }}</span>
+                                    <span>{{ product.category }}</span>
+                                </div>
+                                <button type="button" class="cart-button" data-product-id="{{ product.id }}">Add to cart</button>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <p>There are no listings yet. Log in and add a product to get started.</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">&copy; 2025 FarmFresh. All rights reserved.</div>
+    </footer>
+
+    <script>
+        document.getElementById('product-search').addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach((card) => {
+                const name = card.dataset.name.toLowerCase();
+                const category = card.dataset.category.toLowerCase();
+                const matches = !query || name.includes(query) || category.includes(query);
+                card.style.display = matches ? 'flex' : 'none';
+            });
+        });
+
+        document.querySelectorAll('.cart-button').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const productId = button.dataset.productId;
+                try {
+                    const response = await fetch('/cart/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ product_id: productId })
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.success) {
+                        const cartAnchor = document.querySelector('.site-nav a[href="/cart"]');
+                        if (cartAnchor) { cartAnchor.textContent = `Cart (${data.cart_count})`; }
+                        button.textContent = 'Added';
+                        button.disabled = true;
+                    }
+                } catch (error) {
+                    console.error('Failed to add product to cart', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

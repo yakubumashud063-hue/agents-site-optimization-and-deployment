@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fruits - FarmFresh</title>
+    <title>{{ category_name }} - FarmFresh</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
         body {
@@ -82,7 +82,6 @@
 }
 
     </style>
-
 
     <!-- shared chat/save controls -->
     <style>
@@ -174,7 +173,7 @@
 </head>
 <body>
     <header>
-        <h1>Fruits - FarmFresh</h1>
+        <h1>{{ category_name }} - FarmFresh</h1>
     </header>
     <main>
         <h2>Our Fresh Fruits</h2>
@@ -188,127 +187,20 @@
         
     </p>
         <div class="fruit-container">
-            <div class="fruit-item">
-                <img src="/static/images/Apple.png" alt="Apple">
-                <h3>Apple</h3>
-                <p>Juicy and crisp apples perfect for snacking or Juicy.</p>
-                <p class="price">GHC4.50</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/banana.jpg" alt="Bananas">
-                <h3>Bananas</h3>
-                <p>Sweet and ripe bananas to fuel your day with energy.</p>
-                <p class="price">GHC7.50</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/Carot.jpg" alt="Carot">
-                <h3>Carots</h3>
-                <p>Fresh oranges loaded with vitamin for a healthy boost.</p>
-                <p class="price">GHC5.50</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/Blueberries.jpg" alt="Blueberries">
-                <h3>Blueberries</h3>
-                <p>Delicious and sweet blueberries perfect for desserts.</p>
-                <p class="price">GHC4.50</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/spepper.jpg" alt="Sweet pepper">
-                <h3>sweetpepper</h3>
-                <p>Delicious and sweet pepper perfect for desserts.</p>
-                <p class="price">GHC6.0</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/madarin.jpg" alt="mandarin">
-                    <h3>mandarin</h3>
-                    <p>Delicious and sweet mandarin perfect for desserts.</p>
-                    <p class="price">GHC6</P>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/cherries.jpg" alt="cherries">
-                    <h3>cherries</h3>
-                    <p>Neccessary for your vitality.</p>
-                    <p class="price">GHC10.00</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/grapes.jpg" alt="grapes">
-                    <h3>grapes</h3>
-                    <p>Delicious and sweet grapes perfect for your immune system.</p>
-                    <p class="price">GHC10.00</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/durin fruit.jpg." alt="durin fruit">
-                    <h3>durin fruit</h3>
-                    <p>Delicious durin perfect for desserts.</p>
-                    <p class="price">GHC6</P>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/Mango.jpg" alt="Mango">
-                    <h3>Mango</h3>
-                    <p>sweet and perfect juice for your immune system.</p>
-                    <p class="price">GHC5.00</P>
-                    <button>Add to Cart</button>
-            </div>
-                <div class="fruit-item">
-                    <img src="/static/images/avocado.jpg" alt="avocado">
-                    <h3>avocado</h3>
-                    <p>Delicious and sweet fruit perfect for your immune system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/pawpaw.jpg" alt="pawpaw">
-                    <h3>pawpaw</h3>
-                    <p>Delicious and sweet pawpaw perfect for your juice.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/pears.jpg" alt="pears">
-                    <h3>pears</h3>
-                    <p>Delicious and sweet pears Good for your  system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/apples.jpg" alt="apples">
-                    <h3>apples</h3>
-                    <p>Delicious and sweet  perfect for your immune system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/lemon.jpg" alt="lemon">
-                    <h3>lemon</h3>
-                    <p>Good and sweet lemons perfect for your immune system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                    <img src="/static/images/strawberries.gif" alt="Strawberries">
-                    <h3>strawberries</h3>
-                    <p>Delicious and sweet berries perfect for your immune system.</p>
-                    <button>Add to Cart</button>
-            </div>
-            <div class="fruit-item">
-                <img src="/static/images/Kiwi.jpg" alt="Kiwi">
-                <h3>Kiwi</h3>
-                <p>Nice and sweet Kiwi for your health.</p>
-                <button>Add to Cart</button>
+            {% if category_products %}
+                {% for product in category_products %}
+                    <div class="fruit-item">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.description }}</p>
+                        <p class="price">GHC {{ "%.2f"|format(product.price|float) }}</p>
+                        <button type="button" class="add-to-cart" data-product-id="{{ product.id }}">Add to Cart</button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No fruits found in this category yet. Please check back later.</p>
+            {% endif %}
         </div>
-        <div class="fruit-item">
-            <img src="/static/images/rasberries.jpg" alt="rasberries">
-            <h3>rasberries</h3>
-            <p>healthy and sweet rasberries perfect for your immune system.</p>
-            <button>Add to Cart</button>
-    </div>
-
-        </div>
-
     </main>
 
     <footer>
@@ -356,6 +248,29 @@
             if (panel.style.display === 'block') messagePanel.style.display = 'none';
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const productId = button.dataset.productId;
+                    try {
+                        const response = await fetch('/cart/add', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ product_id: productId })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            alert('Added to cart successfully!');
+                        } else {
+                            alert(data.error || 'Unable to add item to cart.');
+                        }
+                    } catch (error) {
+                        alert('Unable to add item to cart.');
+                    }
+                });
+            });
+        });
+
         function sendChat() {
             const input = document.getElementById('chat-text');
             if (!input.value.trim()) {
@@ -393,6 +308,3 @@
 
 </body>
 </html>
-<section>
-    
-</section>

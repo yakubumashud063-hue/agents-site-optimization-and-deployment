@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - FarmFresh</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; background-color: #f4f7f2; color: #1f3315; }
+        header { background-color: #4CAF50; color: white; padding: 1rem; }
+        nav { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 0 2rem; }
+        .nav-links { list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0; flex-wrap: wrap; }
+        .nav-links a { color: white; text-decoration: none; }
+        main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+        .profile-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .profile-summary { background: white; padding: 1.5rem; border-radius: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); flex: 1 1 320px; }
+        .profile-summary h1 { margin-top: 0; font-size: 1.8rem; }
+        .profile-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .upload-button { background: #4CAF50; color: white; border: none; padding: 0.9rem 1.25rem; border-radius: 10px; font-size: 1rem; cursor: pointer; }
+        .upload-button:hover { background: #388E3C; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: white; padding: 1.2rem; border-radius: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
+        .stat-card h2 { margin: 0 0 0.5rem; font-size: 1rem; color: #4CAF50; }
+        .stat-card p { margin: 0; font-size: 1.8rem; font-weight: 700; }
+        .section { background: white; padding: 1.5rem; border-radius: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+        .section h2 { margin-top: 0; color: #4CAF50; }
+        .item-list { list-style: none; padding: 0; margin: 0; }
+        .item-list li { border-bottom: 1px solid #e0e0e0; padding: 0.9rem 0; }
+        .item-list li:last-child { border-bottom: none; }
+        .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; border-radius: 999px; padding: 0.25rem 0.6rem; font-size: 0.85rem; margin-left: 0.5rem; }
+        .toggle-button { background: #eef7ed; color: #2e7d32; border: 1px solid #c8e6c9; padding: 0.65rem 0.9rem; border-radius: 8px; cursor: pointer; margin-top: 0.75rem; }
+        .toggle-button:hover { background: #d7f0d8; }
+        .collapse-content { display: none; margin-top: 1rem; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center; padding: 1rem; }
+        .modal-content { background: white; width: 100%; max-width: 520px; border-radius: 14px; padding: 1.5rem; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.18); }
+        .close-modal { position: absolute; top: 16px; right: 16px; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #555; }
+        .upload-form label { display: block; margin: 0.85rem 0 0.25rem; font-weight: 600; }
+        .upload-form input, .upload-form textarea, .upload-form select { width: 100%; padding: 0.85rem; border: 1px solid #ccc; border-radius: 10px; font: inherit; }
+        .upload-form button { margin-top: 1rem; width: 100%; background: #4CAF50; color: white; border: none; padding: 0.95rem; border-radius: 10px; cursor: pointer; }
+        .upload-form button:hover { background: #388E3C; }
+        .message { margin-top: 1rem; padding: 0.9rem 1rem; border-radius: 10px; }
+        .message.success { background: #e8f5e9; color: #1b5e20; }
+        .message.error { background: #f8d7da; color: #7a1f1f; }
+        @media (max-width: 768px) { nav { flex-direction: column; align-items: stretch; } .profile-top { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div><a href="/" style="color:white; text-decoration:none; font-weight:700;">FarmFresh</a></div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart">Cart ({{ cart_count|default(0) }})</a></li>
+                <li><a href="/dashboard">My Dashboard</a></li>
+                {% if is_admin_view %}
+                    <li><a href="/admin">Back to Admin</a></li>
+                {% endif %}
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="section">
+            <h2>User Profile</h2>
+            <p><strong>Username:</strong> {{ profile_username }}</p>
+            <p><strong>Email:</strong> {{ profile_user.email }}</p>
+            <p><strong>Role:</strong> {{ profile_user.role }}</p>
+        </section>
+
+        <section class="section">
+            <h2>My Ads</h2>
+            {% if user_products %}
+                <ul class="item-list">
+                    {% for product in user_products %}
+                        <li>
+                            <strong>{{ product.name }}</strong> - GHC {{ product.price }} <span class="badge">{{ product.category }}</span>
+                            <div>{{ product.description }}</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No ads posted yet.</p>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2>My Orders</h2>
+            {% if user_orders %}
+                <ul class="item-list">
+                    {% for order in user_orders %}
+                        <li>
+                            <strong>Order #{{ order.order_id }}</strong> - Total: GHC {{ order.total }} <span class="badge">{{ order.created_at }}</span>
+                            <div>Items: {{ order['items'] | length }}</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No orders found.</p>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2>My Clients</h2>
+            {% if clients %}
+                <ul class="item-list">
+                    {% for client in clients %}
+                        <li>{{ client }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No clients found yet.</p>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2>Messages</h2>
+            {% if messages %}
+                <ul class="item-list">
+                    {% for message in messages %}
+                        <li>
+                            <strong>{{ message.name }}:</strong> {{ message.message }}
+                            <div><small>{{ message.submitted_at }}</small></div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No messages found for this user.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
